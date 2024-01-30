@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package orders;
+
+option go_package = "wensiet.orders.v1;ordersv1";
+
+service Orders {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+  rpc GetOrder(GetOrderRequest) returns (Order) {}
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+  rpc UpdateOrder(UpdateOrderStatusRequest) returns (Empty) {}
+}
+
+message Empty {
+
+}
+
+message CreateOrderRequest {
+  string product_id = 1;
+}
+
+message CreateOrderResponse {
+  string id = 1;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message Order {
+  string id = 1;
+  string product_id = 2;
+  string status = 3;
+}
+
+message ListOrdersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListOrdersResponse {
+  int32 total = 1;
+  repeated Order orders = 2;
+}
+
+message UpdateOrderStatusRequest {
+  string id = 1;
+  string status = 2;
+}
+
+
+
+
+
+
+
+
+

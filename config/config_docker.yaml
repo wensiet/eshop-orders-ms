@@ -1,0 +1,19 @@
+env: local
+grpc:
+  port: 9092
+database:
+  host: postgres
+  port: 5432
+  user: user
+  pass: pass
+  name: test
+loki:
+  host: loki
+  port: 3100
+services:
+  products:
+    host: products-ms
+    port: 9090
+  authorization:
+    host: authorization-ms
+    port: 9091

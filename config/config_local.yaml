@@ -1,0 +1,19 @@
+env: local
+grpc:
+  port: 9092
+database:
+  host: localhost
+  port: 5430
+  user: root
+  password: root
+  database: test
+loki:
+  host: localhost
+  port: 3100
+services:
+  products:
+    host: localhost
+    port: 9090
+  authorization:
+    host: localhost
+    port: 9091
