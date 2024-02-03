@@ -26,13 +26,19 @@ func (o Orders) CreateNewOrder(productID string, quantity uint) (uint, error) {
 
 	log.Info("creating new order")
 
-	err := o.gRPCClient.ProceedOrder(productID, quantity)
+	trID, err := o.gRPCClient.BeginTransaction(productID, quantity)
 	if err != nil {
 		appError.LogIfNotApp(err, log)
-		return 0, appError.UnableToProceedOrder
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	orderID, err := o.ordersStorage.CreateOrder(productID, quantity)
+	if err != nil {
+		appError.LogIfNotApp(err, log)
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = o.gRPCClient.EndTransaction(trID, true)
 	if err != nil {
 		appError.LogIfNotApp(err, log)
 		return 0, fmt.Errorf("%s: %w", op, err)

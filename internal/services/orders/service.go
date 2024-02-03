@@ -12,12 +12,12 @@ type Orders struct {
 	ordersStorage OrdersStorage
 }
 
+// New Creates new instance of Orders service layer
 func New(log *slog.Logger, ordersStorage OrdersStorage) *Orders {
 	gRPCClient, err := client.New()
 	if err != nil {
 		for {
-			log.Warn("failed to init gRPC connection with eshop-products-ms. retrying...")
-			log.Error("%s", err)
+			log.With("error", err.Error()).Warn("failed to init gRPC connection with eshop-products-ms. retrying...")
 			time.Sleep(5 * time.Second)
 			gRPCClient, err = client.New()
 			if err == nil {

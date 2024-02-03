@@ -32,6 +32,9 @@ func New(log *slog.Logger, orderService ordersService.Orders, port int) *App {
 		logging.WithLogOnEvents(
 			logging.PayloadReceived, logging.PayloadSent,
 		),
+		logging.WithLevels(func(code codes.Code) logging.Level {
+			return logging.LevelDebug
+		}),
 	}
 
 	recoveryOpts := []recovery.Option{

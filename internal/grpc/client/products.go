@@ -3,23 +3,34 @@ package client
 import (
 	"context"
 	productv1 "eshop-orders-ms/gen/go/products"
-	"log"
+	appError "eshop-orders-ms/internal/apperror"
 )
 
-func (c *GRPCClient) ProceedOrder(id string, quantity uint) error {
-	_, err := c.productsClient.ProceedOrder(context.Background(),
-		&productv1.ProceedOrderRequest{
-			Id:       id,
-			Quantity: int32(quantity),
+func (c *GRPCClient) BeginTransaction(id string, quantity uint) (string, error) {
+	transaction, err := c.productsClient.BeginOrder(context.Background(),
+		&productv1.BeginOrderRequest{
+			ProductId: id,
+			Quantity:  int32(quantity),
 		},
 	)
-	return err
+	if err != nil {
+		return "", err
+	}
+	return transaction.TransactionId, nil
 }
 
-func (c *GRPCClient) Test() {
-	product, err := c.productsClient.GetProduct(context.Background(), &productv1.GetProductRequest{Id: "1"})
+func (c *GRPCClient) EndTransaction(transactionID string, status bool) error {
+	response, err := c.productsClient.ApplyOrder(context.Background(),
+		&productv1.ApplyOrderRequest{
+			TransactionId: transactionID,
+			Success:       status,
+		})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	log.Fatal(product)
+	if !response.Success {
+		return appError.UnableToProceedOrder
+	} else {
+		return nil
+	}
 }
